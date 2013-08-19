@@ -38,10 +38,13 @@ function love.load ()
     )
   end
   -- Inicializa informações do mapa
-  map = {}
-  for i=1,11 do
+  map = {
+    width = 16,
+    height = 11
+  }
+  for i=1,map.height do
     map[i] = {}
-    for j=1,16 do
+    for j=1,map.width do
       if i%2 == 0 and j%2 == 0 then
         map[i][j] = { wall = true }
       else
@@ -50,15 +53,7 @@ function love.load ()
     end
   end
   -- Coloca o GoroberMan em um lugar aleatório do mapa
-  do 
-    local i, j
-    repeat
-      i, j = math.random(1,11), math.random(1,16)
-    until not map[i][j].wall and not map[i][j].box
-    map[i][j].goroberman = goroberman
-    goroberman.i = i
-    goroberman.j = j
-  end
+  goroberman.putInMap(map)
   -- Inicializa música de fundo
   bgm = love.audio.newSource 'data/musics/8-Bit Bomber.ogg'
   bgm:setLooping(true)
@@ -71,7 +66,7 @@ end
 --- Transforma os valores de i e j para os valores válidos mais próximos.
 --  Valores válidos são aqueles que correspondem a posições que estejam dentro
 --  do mapa do jogo.
-local function inside (i,j)
+function inside (i,j)
   return math.max(1, math.min(11, i)), math.max(1, math.min(16, j))
 end
 
@@ -170,26 +165,20 @@ function love.update (dt)
   end
 end
 
+local move_directions = {
+  up    = {-1, 0},
+  down  = {1, 0},
+  left  = {0, -1},
+  right = {0, 1}
+}
+
 --- Função chamada quando o jogador aperta uma tecla do teclado.
 function love.keypressed (button)
   local i, j = goroberman.i, goroberman.j
   if button == ' ' then
     new_bomb(i, j)
-  elseif button == 'up' then
-    i = i - 1
-  elseif button == 'down' then
-    i = i + 1
-  elseif button == 'left' then
-    j = j - 1
-  elseif button == 'right' then
-    j = j + 1
-  end
-  i, j = inside(i,j)
-  if not map[i][j].wall and not map[i][j].box and not map[i][j].bomb then
-    map[goroberman.i][goroberman.j].goroberman = nil
-    goroberman.i = i
-    goroberman.j = j
-    map[i][j].goroberman = goroberman
+  elseif move_directions[button] then
+    goroberman.move(map, unpack(move_directions[button]))
   end
 end
 
