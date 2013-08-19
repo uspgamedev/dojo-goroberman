@@ -1,10 +1,10 @@
 
 require 'goroberman'
+require 'map'
 
 --- Variáveis que guardam informações dos elementos do jogo.
 local bombs
 local explos
-local map
 
 --- Guarda a música de fundo do jogo
 local bgm
@@ -38,22 +38,9 @@ function love.load ()
     )
   end
   -- Inicializa informações do mapa
-  map = {
-    width = 16,
-    height = 11
-  }
-  for i=1,map.height do
-    map[i] = {}
-    for j=1,map.width do
-      if i%2 == 0 and j%2 == 0 then
-        map[i][j] = { wall = true }
-      else
-        map[i][j] = { box = math.random() > 0.5 }
-      end
-    end
-  end
+  map.load(16, 11)
   -- Coloca o GoroberMan em um lugar aleatório do mapa
-  goroberman.putInMap(map)
+  goroberman.putInMap()
   -- Inicializa música de fundo
   bgm = love.audio.newSource 'data/musics/8-Bit Bomber.ogg'
   bgm:setLooping(true)
@@ -63,16 +50,9 @@ function love.load ()
   love.graphics.setBackgroundColor(100,100,100)
 end
 
---- Transforma os valores de i e j para os valores válidos mais próximos.
---  Valores válidos são aqueles que correspondem a posições que estejam dentro
---  do mapa do jogo.
-function inside (i,j)
-  return math.max(1, math.min(11, i)), math.max(1, math.min(16, j))
-end
-
 --- Coloca um bomba na posição (i, j).
 local function new_bomb (i, j)
-  if map[i][j].wall then return end
+  if map.get(i, j, 'wall') then return end
   local bomb = {
     sprite = bombs.sprite,
     i = i,
@@ -82,17 +62,17 @@ local function new_bomb (i, j)
     hotspot = { bombs.sprite:getWidth()/2, bombs.sprite:getHeight()/2 }
   }
   bombs[bomb] = true
-  map[i][j].bomb = bomb
+  map.put(i, j, 'bomb', bomb)
 end
 
 --- Trata o caso em que uma explosão atinge uma caixa.
 function explo_handlers.box (i, j)
-  map[i][j].box = false
+  map.put(i, j, 'box', nil)
 end
 
 --- Cria uma explosão na posição (i, j).
 local function new_explo (i, j)
-  local tile = map[i][j]
+  local tile = map.get(i, j)
   if tile.wall then return end
   local explo = {
     sprite = explos.sprite,
@@ -116,12 +96,12 @@ end
 local function explode (bomb)
   local i, j = bomb.i, bomb.j
   bombs[bomb] = nil
-  map[i][j].bomb = nil
-  new_explo(inside(i, j))
-  new_explo(inside(i+1, j))
-  new_explo(inside(i-1, j))
-  new_explo(inside(i, j+1))
-  new_explo(inside(i, j-1))
+  map.put(i, j, 'bomb', nil)
+  new_explo(map.inside(i, j))
+  new_explo(map.inside(i+1, j))
+  new_explo(map.inside(i-1, j))
+  new_explo(map.inside(i, j+1))
+  new_explo(map.inside(i, j-1))
   explos.sound:rewind()
   explos.sound:play()
 end
@@ -178,7 +158,7 @@ function love.keypressed (button)
   if button == ' ' then
     new_bomb(i, j)
   elseif move_directions[button] then
-    goroberman.move(map, unpack(move_directions[button]))
+    goroberman.move(unpack(move_directions[button]))
   end
 end
 
@@ -236,12 +216,12 @@ local function draw_cube (i, j, color, padding)
 end
 
 -- Desenha uma caixa
-local function draw_box (i, j)
+function draw_box (i, j)
   draw_cube(i, j, {120, 100, 60}, 8)
 end
 
 --- Desenha uma parede
-local function draw_wall (i, j)
+function draw_wall (i, j)
   draw_cube(i, j, {150, 150, 150}, 0)
 end
 
@@ -251,16 +231,7 @@ function love.draw ()
   love.graphics.rectangle('fill', 0, 0, WIDTH, 64)
   love.graphics.setColor(255,255,255)
   love.graphics.printf("GOROBERMAN", WIDTH/2, 32, 0, 'center')
-  for i,row in ipairs(map) do
-    for j,tile in ipairs(row) do
-      if tile.wall then
-        draw_wall(i,j)
-      end
-      if tile.box then
-        draw_box(i,j)
-      end
-    end
-  end
+  map.draw()
   for bomb, check in pairs(bombs) do
     if check == true then
       draw_sprite(bomb)

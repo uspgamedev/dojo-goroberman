@@ -1,6 +1,8 @@
 
 module ('goroberman', package.seeall)
 
+local map = require 'map'
+
 function load ()
   sprite = love.graphics.newImage 'data/images/hero_goroba_small.png'
   i = 1
@@ -9,11 +11,11 @@ function load ()
   hotspot = {sprite:getWidth()/2, sprite:getHeight()-TILESIZE/2}
 end
 
-function putInMap (map)
+function putInMap ()
   repeat
     i, j = math.random(1, map.height), math.random(1, map.width)
-  until not map[i][j].wall and not map[i][j].box
-  map[i][j].goroberman = goroberman
+  until not map.get(i, j, 'wall') and not map.get(i, j, 'box')
+  map.put(i, j, 'goroberman', goroberman)
 end
 
 local collides_with = {
@@ -22,14 +24,14 @@ local collides_with = {
   bomb = true
 }
 
-function move (map, di, dj)
-  local new_i, new_j = inside(i+di, j+dj)
-  for case,_ in pairs(collides_with) do
-    if map[new_i][new_j][case] then
+function move (di, dj)
+  local new_i, new_j = map.inside(i+di, j+dj)
+  for tag,_ in pairs(collides_with) do
+    if map.get(new_i, new_j, tag) then
       return
     end
   end
-  map[i][j].goroberman = nil
+  map.put(i, j, 'goroberman', nil)
   i, j = new_i, new_j
-  map[i][j].goroberman = goroberman
+  map.put(i, j, 'goroberman', goroberman)
 end
