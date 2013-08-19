@@ -1,14 +1,10 @@
 
+require 'goroberman'
+
 --- Variáveis que guardam informações dos elementos do jogo.
-local goroberman
 local bombs
 local explos
 local map
-
---- Valores constantes
-local WIDTH
-local HEIGHT
-local TILESIZE
 
 --- Guarda a música de fundo do jogo
 local bgm
@@ -18,18 +14,10 @@ local explo_handlers = {}
 
 --- Código para ser executado no início do jogo.
 function love.load ()
-  -- Inicializa as constantes
   WIDTH = love.graphics.getWidth()
   HEIGHT = love.graphics.getHeight()
   TILESIZE = 64
-  -- Inicializa informações do GoroberMan
-  goroberman = {
-    sprite = love.graphics.newImage 'data/images/hero_goroba_small.png',
-    i = 1,
-    j = 1,
-    size = 1,
-    hotspot = {32, 90-32}
-  }
+  goroberman.load()
   -- Inicializa informações da bombas
   bombs = {
     sprite = love.graphics.newImage 'data/images/bomb_0.png'
