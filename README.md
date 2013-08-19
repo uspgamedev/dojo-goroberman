@@ -15,8 +15,13 @@ Organização das pastas
     projeto para a IDE Sublime Text 2.
 3. **goroberman-semanabcc**/
   - O código produzido durante o DoJo.
-4. **goroberman**/
+4. **goroberman-gabarito**/
   - O "gabarito".
+5. **goroberman**/
+  - Uma versão completa do jogo usando código mais elaborado e melhor
+    refatorado. Na prática, um DoJo muito dificilmente chegaria nesse ponto,
+    mas achamos legal mostrar como ficaria um código mais "bonito" para o jogo
+    proposto.
 
 Instruções
 ----------
