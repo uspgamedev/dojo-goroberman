@@ -1,0 +1,29 @@
+
+1) No começo, havia um GoroberMan
+  1.1) Desenhar o GoroberMan com um tamanho apropriado.
+  1.2) Fazer ele se mover, com as teclas direcionais, a distância de um passo.
+  1.3) Fazer a movimentação dele não sair da tela.
+
+2) Notícias Bombásticas
+  2.0) Desenhar bombas com um tamanho apropriado.
+  2.1) Fazer o GoroberMan soltar bombas quando apertar ESPAÇO.
+  2.2) Fazer as bombas sumirem depois de um tempo.
+  2.3) Bombas deixam uma explosão.
+  2.3) Fazer as explosões terem um formato de cruz na grade.
+
+3) Explosível mundo novo
+  3.1) Destacar região da janela não axessível.
+  3.2) Desenhar caixas destrutíveis pelas bombas.
+  3.3) Explosões explodem outras bombas.
+  3.4) Desenhar obstáculos que o GoroberMan não consegue passar.
+
+4) Uma nova ameaça
+  4.1) Explosões matam o GoroberMan.
+  4.2) Desenhar MechaWils destrutíveis na grade.
+  4.3) Se um MechaWil fica do lado do GoroberMan, ele perde.
+  4.4) MechaWils se movem aleatoriamente a cada segundo.
+
+5) Toques finais
+  6.1) Novas caixas e MechaWils aparecem de tempos em tempos.
+  6.2) Pontuação simples
+  6.3) Opção "tentar de novo" quando perde.

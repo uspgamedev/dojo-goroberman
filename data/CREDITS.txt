@@ -1,0 +1,6 @@
+
+images/bomb_0.png
+images/explosion_1.png
+Source: Bombada - http://opengameart.org/content/bombada
+By: richtaur from lostdecadegames - http://www.lostdecadegames.com/
+License: CC3.0-BY-SA
