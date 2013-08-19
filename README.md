@@ -18,3 +18,9 @@ Organização das pastas
 4. **goroberman**/
   - O "gabarito".
 
+Instruções
+----------
+
+Em breve instruções para quem não pôde participar do DoJo e quiser experimentar
+a LÖVE para fazer jogos.
+
