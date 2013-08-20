@@ -1,6 +1,10 @@
 
 module ('draw', package.seeall)
 
+function toPixel (i, j)
+  return 32+(j-1)*TILESIZE, 54+32+(i-1)*TILESIZE
+end
+
 function sprite (obj)
   if not obj.sprite then return end
   local i, j = obj.i, obj.j
@@ -8,7 +12,7 @@ function sprite (obj)
     obj.sprite,
     32+(j-1)*TILESIZE,
     64+32+(i-1)*TILESIZE,
-    0,
+    obj.rotation or 0,
     obj.size, obj.size,
     obj.hotspot[1], obj.hotspot[2]
   )

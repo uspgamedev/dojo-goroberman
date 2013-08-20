@@ -143,6 +143,7 @@ function love.update (dt)
       end
     end
   end
+  goroberman.update(dt)
 end
 
 local move_directions = {

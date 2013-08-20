@@ -4,6 +4,8 @@ module ('goroberman', package.seeall)
 local map = require 'map'
 
 local state
+local timer
+local fly_dir
 
 function load ()
   state = 'alive'
@@ -18,6 +20,14 @@ end
 
 function alive ()
   return state == 'alive'
+end
+
+function dying ()
+  return state == 'dying'
+end
+
+function dead ()
+  return state == 'dead'
 end
 
 local collides_with = {
@@ -41,9 +51,37 @@ end
 
 function die ()
   state = 'dying'
+  timer = 0
+  local origin = { draw.toPixel(i,j) }
+  local target = {
+    WIDTH/4+math.random()*WIDTH/2,
+    HEIGHT/4+math.random()*HEIGHT/2
+  }
+  fly_dir = math.atan2(target[2]-origin[2], target[1]-origin[1])
+end
+
+function update (dt)
+  if dying() then
+    timer = timer + dt
+    if timer > 0.5 then
+      state = 'dead'
+    end
+  end 
 end
 
 function show ()
-  if not alive() then return end
+  if dead() then return end
+  if dying() then
+    rotation = math.pi*2*10*timer
+    size = 1+timer*2
+    love.graphics.translate(
+      1000*timer*math.cos(fly_dir),
+      1000*timer*math.sin(fly_dir)
+    )
+    love.graphics.setColor(255, 255, 255, 255-timer*2*255)
+  else
+    rotation = 0
+    size = 1
+  end
   draw.sprite(goroberman)
 end
