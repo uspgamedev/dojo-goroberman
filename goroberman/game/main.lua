@@ -1,6 +1,7 @@
 
 require 'goroberman'
 require 'map'
+require 'draw'
 
 --- Variáveis que guardam informações dos elementos do jogo.
 local bombs
@@ -17,6 +18,8 @@ function love.load ()
   WIDTH = love.graphics.getWidth()
   HEIGHT = love.graphics.getHeight()
   TILESIZE = 64
+  -- Inicializa informações do mapa
+  map.load(16, 11)
   goroberman.load()
   -- Inicializa informações da bombas
   bombs = {
@@ -37,17 +40,11 @@ function love.load ()
       explos.sprite:getWidth(), explos.sprite:getHeight()
     )
   end
-  -- Inicializa informações do mapa
-  map.load(16, 11)
-  -- Coloca o GoroberMan em um lugar aleatório do mapa
-  goroberman.putInMap()
   -- Inicializa música de fundo
   bgm = love.audio.newSource 'data/musics/8-Bit Bomber.ogg'
   bgm:setLooping(true)
   bgm:setVolume(0.3)
   bgm:play()
-  -- Configura cor de fundo
-  love.graphics.setBackgroundColor(100,100,100)
 end
 
 --- Coloca um bomba na posição (i, j).
@@ -113,12 +110,15 @@ end
 
 --- Trata o caso que uma explosão atinge o GoroberMan.
 function explo_handlers.goroberman (i, j)
-  love.update = nil
-  love.draw = function ()
-    love.graphics.translate(512-50, love.graphics.getHeight()/2-100)
-    love.graphics.scale(3,3)
-    love.graphics.print("YOU LOSE", 0, 0)
+  local old_keypressed = love.keypressed
+  love.keypressed = function (button)
+    if button == ' ' then
+      love.keypressed = old_keypressed
+      map.load(16, 11)
+      goroberman.load()
+    end
   end
+  goroberman.die()
 end
 
 --- Código executado a todo quadro do jogo.
@@ -162,85 +162,22 @@ function love.keypressed (button)
   end
 end
 
---- Desenha o sprite do objeto passado
-local function draw_sprite (obj)
-  local i, j = obj.i, obj.j
-  love.graphics.draw(
-    obj.sprite,
-    32+(j-1)*TILESIZE,
-    64+32+(i-1)*TILESIZE,
-    0,
-    obj.size, obj.size,
-    obj.hotspot[1], obj.hotspot[2]
-  )
-end
-
---- Desenha o quadro atual do sprite do objeto passado
-local function draw_sprite_quad (obj)
-  local i, j = obj.i, obj.j
-  local quad = obj.quads[obj.frame]
-  love.graphics.drawq(
-    obj.sprite,
-    quad,
-    32+(j-1)*TILESIZE,
-    64+32+(i-1)*TILESIZE,
-    0,
-    obj.size, obj.size,
-    obj.hotspot[1], obj.hotspot[2]
-  )
-end
-
-local function draw_cube (i, j, color, padding)
-  love.graphics.setColor(color)
-  love.graphics.rectangle(
-    'fill',
-    (j-1)*TILESIZE+padding,
-    64+(i-1)*TILESIZE+padding,
-    64-padding*2, 32-padding
-  )
-  love.graphics.setColor(color[1]*0.75, color[2]*0.75, color[3]*0.75)
-  love.graphics.rectangle(
-    'fill',
-    (j-1)*TILESIZE+padding,
-    64+(i-1)*TILESIZE+32,
-    64-padding*2, 32-padding
-  )
-  love.graphics.setColor(0, 0, 0)
-  love.graphics.rectangle(
-    'line',
-    (j-1)*TILESIZE+padding,
-    64+(i-1)*TILESIZE+padding,
-    64-padding*2, 64-padding*2
-  )
-  love.graphics.setColor(255,255,255)
-end
-
--- Desenha uma caixa
-function draw_box (i, j)
-  draw_cube(i, j, {120, 100, 60}, 8)
-end
-
---- Desenha uma parede
-function draw_wall (i, j)
-  draw_cube(i, j, {150, 150, 150}, 0)
-end
-
 --- Código executado para desenhar na tela.
 function love.draw ()
   love.graphics.setColor(0,0,0)
   love.graphics.rectangle('fill', 0, 0, WIDTH, 64)
   love.graphics.setColor(255,255,255)
   love.graphics.printf("GOROBERMAN", WIDTH/2, 32, 0, 'center')
-  map.draw()
+  map.show()
   for bomb, check in pairs(bombs) do
     if check == true then
-      draw_sprite(bomb)
+      draw.sprite(bomb)
     end
   end
   for explo, check in pairs(explos) do
     if check == true then
-      draw_sprite_quad(explo)
+      draw.sprite_quad(explo)
     end
   end
-  draw_sprite(goroberman)
+  goroberman.show()
 end

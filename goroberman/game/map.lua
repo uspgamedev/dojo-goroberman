@@ -1,6 +1,7 @@
 
 module ('map', package.seeall)
 
+local draw = require 'draw'
 local tiles
 
 function load (w, h)
@@ -16,6 +17,8 @@ function load (w, h)
       end
     end
   end
+  -- Configura cor de fundo
+  love.graphics.setBackgroundColor(100,100,100)
 end
 
 function get (i, j, tag)
@@ -33,14 +36,14 @@ function inside (i, j)
   return  math.max(1, math.min(height, i)), math.max(1, math.min(width, j))
 end
 
-function draw ()
+function show ()
   for i,row in ipairs(tiles) do
     for j,tile in ipairs(row) do
       if tile.wall then
-        draw_wall(i,j)
+        draw.wall(i,j)
       end
       if tile.box then
-        draw_box(i,j)
+        draw.box(i,j)
       end
     end
   end 
