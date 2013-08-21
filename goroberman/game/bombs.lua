@@ -1,8 +1,9 @@
 
 module ('bombs', package.seeall)
 
-local map   = require 'map'
-local draw  = require 'draw'
+local map     = require 'map'
+local draw    = require 'draw'
+local explos  = require 'explos'
 
 local deployed = {}
 
@@ -39,11 +40,11 @@ function explode (bomb)
   local i, j = bomb.i, bomb.j
   deployed[bomb] = nil
   map.put(i, j, 'bomb', nil)
-  new_explo(map.inside(i, j))
-  new_explo(map.inside(i+1, j))
-  new_explo(map.inside(i-1, j))
-  new_explo(map.inside(i, j+1))
-  new_explo(map.inside(i, j-1))
+  explos.new(map.inside(i, j))
+  explos.new(map.inside(i+1, j))
+  explos.new(map.inside(i-1, j))
+  explos.new(map.inside(i, j+1))
+  explos.new(map.inside(i, j-1))
   explos.sound:rewind()
   explos.sound:play()
 end
