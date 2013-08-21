@@ -1,11 +1,8 @@
 
 require 'goroberman'
+require 'bombs'
 require 'map'
 require 'draw'
-
---- Variáveis que guardam informações dos elementos do jogo.
-local bombs
-local explos
 
 --- Guarda a música de fundo do jogo
 local bgm
@@ -21,10 +18,7 @@ function love.load ()
   -- Inicializa informações do mapa
   map.load(16, 11)
   goroberman.load()
-  -- Inicializa informações da bombas
-  bombs = {
-    sprite = love.graphics.newImage 'data/images/bomb_0.png'
-  }
+  bombs.load()
   -- Inicializa informações das exploções
   explos = {
     sprite = love.graphics.newImage 'data/images/explosion_1.png',
@@ -47,28 +41,13 @@ function love.load ()
   bgm:play()
 end
 
---- Coloca um bomba na posição (i, j).
-local function new_bomb (i, j)
-  if map.get(i, j, 'wall') then return end
-  local bomb = {
-    sprite = bombs.sprite,
-    i = i,
-    j = j,
-    size = 0.5,
-    time = 3,
-    hotspot = { bombs.sprite:getWidth()/2, bombs.sprite:getHeight()/2 }
-  }
-  bombs[bomb] = true
-  map.put(i, j, 'bomb', bomb)
-end
-
 --- Trata o caso em que uma explosão atinge uma caixa.
 function explo_handlers.box (i, j)
   map.put(i, j, 'box', nil)
 end
 
 --- Cria uma explosão na posição (i, j).
-local function new_explo (i, j)
+function new_explo (i, j)
   local tile = map.get(i, j)
   if tile.wall then return end
   local explo = {
@@ -89,23 +68,9 @@ local function new_explo (i, j)
   explos[explo] = true
 end
 
---- Explode a bomba passada como argumento.
-local function explode (bomb)
-  local i, j = bomb.i, bomb.j
-  bombs[bomb] = nil
-  map.put(i, j, 'bomb', nil)
-  new_explo(map.inside(i, j))
-  new_explo(map.inside(i+1, j))
-  new_explo(map.inside(i-1, j))
-  new_explo(map.inside(i, j+1))
-  new_explo(map.inside(i, j-1))
-  explos.sound:rewind()
-  explos.sound:play()
-end
-
 --- Trata o caso em que uma explosão atinge outra bomba.
 function explo_handlers.bomb (i, j, bomb)
-  explode(bomb)
+  bomb:explode()
 end
 
 --- Trata o caso que uma explosão atinge o GoroberMan.
@@ -123,14 +88,7 @@ end
 
 --- Código executado a todo quadro do jogo.
 function love.update (dt)
-  for bomb,check in pairs(bombs) do
-    if check == true then
-      bomb.time = bomb.time - dt
-      if bomb.time <= 0 then
-        explode(bomb)
-      end
-    end
-  end
+  bombs.update(dt)
   for explo,check in pairs(explos) do
     if check == true then
       explo.time = explo.time - dt
@@ -157,7 +115,7 @@ local move_directions = {
 function love.keypressed (button)
   local i, j = goroberman.i, goroberman.j
   if button == ' ' then
-    new_bomb(i, j)
+    bombs.new(i,j)
   elseif move_directions[button] then
     goroberman.move(unpack(move_directions[button]))
   end
@@ -170,11 +128,7 @@ function love.draw ()
   love.graphics.setColor(255,255,255)
   love.graphics.printf("GOROBERMAN", WIDTH/2, 32, 0, 'center')
   map.show()
-  for bomb, check in pairs(bombs) do
-    if check == true then
-      draw.sprite(bomb)
-    end
-  end
+  bombs.show()
   for explo, check in pairs(explos) do
     if check == true then
       draw.sprite_quad(explo)
