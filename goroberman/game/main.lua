@@ -11,11 +11,17 @@ local bgm
 --- Goroberman
 local goroberman
 
+--- Temporizador da criação de MechaWils
+local timer
+local delay
+
 --- Código para ser executado no início do jogo.
 function love.load ()
   WIDTH = love.graphics.getWidth()
   HEIGHT = love.graphics.getHeight()
   TILESIZE = 64
+  timer = 0
+  delay = 5
   -- Inicializa informações do mapa
   map.load(16, 11)
   avatars.load()
@@ -47,11 +53,18 @@ function love.load ()
   end
 end
 
+
 --- Código executado a todo quadro do jogo.
 function love.update (dt)
   bombs.update(dt)
   explos.update(dt)
   avatars.update(dt)
+  timer = timer + dt
+  while timer >= delay do
+    timer = timer - delay
+    delay = delay*0.9
+    (avatars.new 'wil').size = 1/4
+  end
 end
 
 local move_directions = {

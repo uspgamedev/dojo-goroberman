@@ -1,6 +1,6 @@
 
 function love.conf(t)
-  t.title = "GoroberMan"      -- The title of the window the game is in (string)
+  t.title = "GoroberMan: Shingeki no Wil"
   t.author = "USPGameDev"     -- The author of the game (string)
   t.url = "uspgamedev.org"    -- The website of the game (string)
   t.identity = "goroberman"   -- The name of the save directory (string)

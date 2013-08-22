@@ -131,7 +131,7 @@ function update (dt)
         else
           avatar:move(0, 1-2*(math.random(2)-1))
         end
-        avatar.delay = -math.log(math.random())*0.5
+        avatar.delay = math.random(2)
       end
     elseif avatar:dying() then
       avatar.timer = avatar.timer + dt
