@@ -29,7 +29,21 @@ function love.load ()
     bgm:play()
   end
   -- Inicializa o goroberman
-  goroberman = avatars.new()
+  goroberman = avatars.new 'goroba'
+  function goroberman:explode ()
+    local old_keypressed = love.keypressed
+    function love.keypressed (button)
+      if button == ' ' then
+        love.keypressed = old_keypressed
+        love.load()
+      end
+    end
+    self:die()
+  end
+  -- Cria uns MechaWils
+  for i=1,5 do
+    avatars.new 'wil'
+  end
 end
 
 --- Código executado a todo quadro do jogo.

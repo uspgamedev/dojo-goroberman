@@ -13,26 +13,56 @@ local proto = {
   i = 1, j = 1
 }
 
+local collides_with = {
+  wall = true,
+  box = true,
+  bomb = true,
+  avatar = true
+}
+
 local sprite_cash
 local hotspot_cash
 local deployed
 
 function load ()
   deployed = {}
-  sprite_cash =
-    sprite_cash or love.graphics.newImage 'data/images/hero_goroba_small.png'
-  hotspot_cash = {sprite_cash:getWidth()/2, sprite_cash:getHeight()-TILESIZE/2}
+  sprite_cash = sprite_cash or {
+    goroba = love.graphics.newImage 'data/images/hero_goroba_small.png',
+    wil = love.graphics.newImage 'data/images/hero_wil_small.png'
+  }
+  hotspot_cash = hotspot_cash or {
+    goroba = {
+      sprite_cash.goroba:getWidth()/2,
+      sprite_cash.goroba:getHeight()-TILESIZE/2
+    },
+    wil = {
+      sprite_cash.wil:getWidth()/2,
+      sprite_cash.wil:getHeight()-TILESIZE/2
+    }
+  }
 end
 
-function new ()
+local function collides (i, j)
+  for tag,_ in pairs(collides_with) do
+    if map.get(i, j, tag) then
+      return true
+    end
+  end
+end
+
+local next_ID = 1
+
+function new (which)
   local avatar = setmetatable({}, { __index = proto })
   local i, j
   repeat
     i, j = math.random(1, map.height), math.random(1, map.width)
-  until not map.get(i, j, 'wall') and not map.get(i, j, 'box')
+  until not collides(i,j)
   avatar.i, avatar.j = i, j
-  avatar.sprite = sprite_cash
-  avatar.hotspot = hotspot_cash
+  avatar.sprite = sprite_cash[which]
+  avatar.hotspot = hotspot_cash[which]
+  avatar.ID = next_ID
+  next_ID = next_ID + 1
   deployed[avatar] = true
   map.put(i, j, 'avatar', avatar)
   return avatar
@@ -46,25 +76,10 @@ function proto:dying ()
   return self.state == 'dying'
 end
 
-function proto:dead ()
-  return self.state == 'dead'
-end
-
-local collides_with = {
-  wall = true,
-  box = true,
-  bomb = true,
-  avatar = true
-}
-
 function proto:move (di, dj)
   if not self:alive() then return end
   local new_i, new_j = map.inside(self.i+di, self.j+dj)
-  for tag,_ in pairs(collides_with) do
-    if map.get(new_i, new_j, tag) then
-      return
-    end
-  end
+  if collides(new_i, new_j) then return end
   map.put(self.i, self.j, 'avatar', nil)
   self.i, self.j = new_i, new_j
   map.put(self.i, self.j, 'avatar', self)
@@ -72,18 +87,12 @@ end
 
 --- Trata o caso que uma explosão atinge o GoroberMan.
 function proto:explode ()
-  local old_keypressed = love.keypressed
-  love.keypressed = function (button)
-    if button == ' ' then
-      love.keypressed = old_keypressed
-      love.load()
-    end
-  end
   self:die()
 end
 
 function proto:die ()
   if self:dying() then return end
+  map.put(self.i, self.j, 'avatar', nil)
   self.state = 'dying'
   self.timer = 0
   local origin = { draw.toPixel(self.i, self.j) }
@@ -111,7 +120,9 @@ end
 
 function show ()
   for avatar,_ in pairs(deployed) do
+    love.graphics.push()
     if avatar:dying() then
+      print(avatar.ID)
       avatar.rotation = math.pi*2*10*avatar.timer
       avatar.size = 1+avatar.timer*2
       love.graphics.translate(
@@ -119,10 +130,9 @@ function show ()
         1000*avatar.timer*math.sin(avatar.fly_dir)
       )
       love.graphics.setColor(255, 255, 255, 255-avatar.timer*2*255)
-    else
-      avatar.rotation = 0
-      avatar.size = 1
     end
     draw.sprite(avatar)
+    love.graphics.pop()
+    love.graphics.setColor(255, 255, 255)
   end
 end
