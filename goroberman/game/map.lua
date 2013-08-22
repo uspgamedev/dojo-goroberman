@@ -30,6 +30,7 @@ function load (w, h)
 end
 
 function get (i, j, tag)
+  if i < 1 or i > height or j < 1 or j > width then return nil end
   if tag then
     return tiles[i][j][tag]
   end
@@ -37,6 +38,7 @@ function get (i, j, tag)
 end
 
 function put (i, j, tag, value)
+  if i < 1 or i > height or j < 1 or j > width then return nil end
   tiles[i][j][tag] = value
 end
 

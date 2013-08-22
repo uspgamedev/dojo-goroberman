@@ -57,7 +57,12 @@ function new (which)
   local i, j
   repeat
     i, j = math.random(1, map.height), math.random(1, map.width)
-  until not collides(i,j)
+  until not map.get(i, j, 'wall')
+  for ki=i-1,i+1 do
+    for kj=j-1,j+1 do
+      map.put(ki, kj, 'box', nil)
+    end
+  end
   avatar.i, avatar.j = i, j
   avatar.sprite = sprite_cash[which]
   avatar.hotspot = hotspot_cash[which]
