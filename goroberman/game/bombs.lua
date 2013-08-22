@@ -6,15 +6,20 @@ local draw    = require 'draw'
 local explos  = require 'explos'
 
 local deployed
+local total
+local limit
 local sprite_cash
 
 function load ()
   deployed = {}
+  total = 0
+  limit = 1
   sprite_cash = sprite_cash or love.graphics.newImage 'data/images/bomb_0.png'
 end
 
 function new (i, j)
   if map.get(i, j, 'wall') then return end
+  if total >= limit then return end
   local bomb = {
     sprite = sprite_cash,
     i = i,
@@ -26,6 +31,7 @@ function new (i, j)
   }
   deployed[bomb] = true
   map.put(i, j, 'bomb', bomb)
+  total = total + 1
 end
 
 function update (dt)
@@ -43,6 +49,7 @@ function explode (bomb, radius)
   local i, j = bomb.i, bomb.j
   deployed[bomb] = nil
   map.put(i, j, 'bomb', nil)
+  total = total - 1
   explos.new(i, j)
   explos.new(i+1, j, 1, 0, radius)
   explos.new(i-1, j, -1, 0, radius)

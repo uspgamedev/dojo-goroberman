@@ -11,7 +11,7 @@ local bgm
 --- Goroberman
 local goroberman
 
---- Temporizador da criação de MechaWils
+--- Variáveis globais locais
 local timer
 local delay
 
@@ -63,7 +63,7 @@ function love.update (dt)
   if avatars.getTotal() <= 17 then
     while timer >= delay do
       timer = timer - delay
-      delay = delay*0.9
+      delay = math.max(delay*0.9, 1.0);
       (avatars.new 'wil').size = 1/4
     end
   end
