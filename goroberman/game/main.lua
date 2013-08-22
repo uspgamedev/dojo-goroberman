@@ -60,10 +60,12 @@ function love.update (dt)
   explos.update(dt)
   avatars.update(dt)
   timer = timer + dt
-  while timer >= delay do
-    timer = timer - delay
-    delay = delay*0.9
-    (avatars.new 'wil').size = 1/4
+  if avatars.getTotal() <= 17 then
+    while timer >= delay do
+      timer = timer - delay
+      delay = delay*0.9
+      (avatars.new 'wil').size = 1/4
+    end
   end
 end
 

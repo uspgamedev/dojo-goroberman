@@ -13,7 +13,8 @@ local proto = {
   hotspot = nil,
   i = 1, j = 1,
   damages = true,
-  delay = 0
+  delay = 0,
+  accum = 0
 }
 
 local collides_with = {
@@ -26,8 +27,10 @@ local collides_with = {
 local sprite_cash
 local hotspot_cash
 local deployed
+local total
 
 function load ()
+  total = 0
   deployed = {}
   sprite_cash = sprite_cash or {
     goroba = love.graphics.newImage 'data/images/hero_goroba_small.png',
@@ -66,6 +69,7 @@ function new (which)
       map.put(ki, kj, 'box', nil)
     end
   end
+  avatar.accum = math.random()*math.pi*2
   avatar.i, avatar.j = i, j
   avatar.sprite = sprite_cash[which]
   avatar.hotspot = hotspot_cash[which]
@@ -73,6 +77,7 @@ function new (which)
   next_ID = next_ID + 1
   deployed[avatar] = true
   map.put(i, j, 'avatar', avatar)
+  total = total + 1
   return avatar
 end
 
@@ -117,21 +122,32 @@ function proto:die ()
     HEIGHT/4+math.random()*HEIGHT/2
   }
   self.fly_dir = math.atan2(target[2]-origin[2], target[1]-origin[1])
+  total = total - 1
+end
+
+function getTotal ()
+  return total
 end
 
 function update (dt)
   local dead = {}
   for avatar,_ in pairs(deployed) do
-    if avatar:alive() and avatar.damages then
-      -- This is done by enemy avatars
-      avatar.delay = avatar.delay - dt
-      if avatar.delay <= 0 then
-        if math.random() >= 0.5 then
-          avatar:move(1-2*(math.random(2)-1), 0)
-        else
-          avatar:move(0, 1-2*(math.random(2)-1))
-        end
-        avatar.delay = math.random(2)
+    if avatar:alive() then
+      avatar.accum = avatar.accum + dt
+      while avatar.accum >= 2*math.pi do
+        avatar.accum = avatar.accum - 2*math.pi
+      end
+      if avatar.damages then
+        -- This is done by enemy avatars
+        avatar.delay = avatar.delay - dt
+        if avatar.delay <= 0 then
+          if math.random() >= 0.5 then
+            avatar:move(1-2*(math.random(2)-1), 0)
+          else
+            avatar:move(0, 1-2*(math.random(2)-1))
+          end
+          avatar.delay = 0.5+math.random()
+      end
       end
     elseif avatar:dying() then
       avatar.timer = avatar.timer + dt
@@ -150,7 +166,14 @@ end
 function show ()
   for avatar,_ in pairs(deployed) do
     love.graphics.push()
-    if avatar:dying() then
+    if avatar:alive() then
+      if avatar.damages then
+        love.graphics.translate(
+          10*math.cos(3*avatar.accum),
+          10*math.sin(3*avatar.accum)
+        )
+      end
+    elseif avatar:dying() then
       love.graphics.translate(
         1000*avatar.timer*math.cos(avatar.fly_dir),
         1000*avatar.timer*math.sin(avatar.fly_dir)
