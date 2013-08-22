@@ -5,21 +5,23 @@ local map     = require 'map'
 local draw    = require 'draw'
 local explos  = require 'explos'
 
-local deployed = {}
+local deployed
+local sprite_cash
 
 function load ()
-  sprite = sprite or love.graphics.newImage 'data/images/bomb_0.png'
+  deployed = {}
+  sprite_cash = sprite_cash or love.graphics.newImage 'data/images/bomb_0.png'
 end
 
 function new (i, j)
   if map.get(i, j, 'wall') then return end
   local bomb = {
-    sprite = sprite,
+    sprite = sprite_cash,
     i = i,
     j = j,
     size = 0.5,
     time = 3,
-    hotspot = { sprite:getWidth()/2, sprite:getHeight()/2 },
+    hotspot = { sprite_cash:getWidth()/2, sprite_cash:getHeight()/2 },
     explode = explode
   }
   deployed[bomb] = true

@@ -1,5 +1,5 @@
 
-require 'goroberman'
+require 'avatars'
 require 'bombs'
 require 'explos'
 require 'map'
@@ -8,6 +8,9 @@ require 'draw'
 --- Guarda a música de fundo do jogo
 local bgm
 
+--- Goroberman
+local goroberman
+
 --- Código para ser executado no início do jogo.
 function love.load ()
   WIDTH = love.graphics.getWidth()
@@ -15,21 +18,25 @@ function love.load ()
   TILESIZE = 64
   -- Inicializa informações do mapa
   map.load(16, 11)
-  goroberman.load()
+  avatars.load()
   bombs.load()
   explos.load()
   -- Inicializa música de fundo
-  bgm = love.audio.newSource 'data/musics/8-Bit Bomber.ogg'
-  bgm:setLooping(true)
-  bgm:setVolume(0.3)
-  bgm:play()
+  if not bgm then
+    bgm = love.audio.newSource 'data/musics/8-Bit Bomber.ogg'
+    bgm:setLooping(true)
+    bgm:setVolume(0.3)
+    bgm:play()
+  end
+  -- Inicializa o goroberman
+  goroberman = avatars.new()
 end
 
 --- Código executado a todo quadro do jogo.
 function love.update (dt)
   bombs.update(dt)
   explos.update(dt)
-  goroberman.update(dt)
+  avatars.update(dt)
 end
 
 local move_directions = {
@@ -45,7 +52,7 @@ function love.keypressed (button)
   if button == ' ' then
     bombs.new(i,j)
   elseif move_directions[button] then
-    goroberman.move(unpack(move_directions[button]))
+    goroberman:move(unpack(move_directions[button]))
   end
 end
 
@@ -58,5 +65,5 @@ function love.draw ()
   map.show()
   bombs.show()
   explos.show()
-  goroberman.show()
+  avatars.show()
 end

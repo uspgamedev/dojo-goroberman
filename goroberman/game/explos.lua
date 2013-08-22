@@ -3,11 +3,14 @@ module ('explos', package.seeall)
 
 local map = require 'map'
 
-local deployed = {}
+local deployed
+local sprite_cash
 
 function load ()
+  deployed = {}
   -- Inicializa informações das exploções
-  sprite = love.graphics.newImage 'data/images/explosion_1.png'
+  sprite_cash =
+    sprite_cash or love.graphics.newImage 'data/images/explosion_1.png'
   quads = {}
   period = 0.1
   sound = love.audio.newSource 'data/sounds/PK_Hit_CK1.wav'
@@ -16,7 +19,7 @@ function load ()
     quads[i] = love.graphics.newQuad(
       (i-1)*94, 0,
       94, 95,
-      sprite:getWidth(), sprite:getHeight()
+      sprite_cash:getWidth(), sprite_cash:getHeight()
     )
   end 
 end
@@ -26,7 +29,7 @@ function new (i, j)
   local tile = map.get(i, j)
   if tile.wall then return end
   local explo = {
-    sprite = sprite,
+    sprite = sprite_cash,
     i = i,
     j = j,
     size = 0.5,
