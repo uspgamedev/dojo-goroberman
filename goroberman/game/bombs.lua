@@ -38,15 +38,16 @@ function update (dt)
 end
 
 --- Explode a bomba passada como argumento.
-function explode (bomb)
+function explode (bomb, radius)
+  radius = radius or 2
   local i, j = bomb.i, bomb.j
   deployed[bomb] = nil
   map.put(i, j, 'bomb', nil)
-  explos.new(map.inside(i, j))
-  explos.new(map.inside(i+1, j))
-  explos.new(map.inside(i-1, j))
-  explos.new(map.inside(i, j+1))
-  explos.new(map.inside(i, j-1))
+  explos.new(i, j)
+  explos.new(i+1, j, 1, 0, radius)
+  explos.new(i-1, j, -1, 0, radius)
+  explos.new(i, j+1, 0, 1, radius)
+  explos.new(i, j-1, 0, -1, radius)
   explos.sound:rewind()
   explos.sound:play()
 end

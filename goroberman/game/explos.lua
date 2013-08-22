@@ -25,9 +25,10 @@ function load ()
 end
 
 --- Cria uma explosão na posição (i, j).
-function new (i, j)
+function new (i, j, di, dj, radius)
   local tile = map.get(i, j)
-  if tile.wall then return end
+  local tail = false
+  if not tile or tile.wall then return end
   local explo = {
     sprite = sprite_cash,
     i = i,
@@ -38,12 +39,18 @@ function new (i, j)
     frame = 1,
     time = period
   }
+  if radius and radius > 1 and not tile.box then
+    tail = true
+  end
   for _,obj in pairs(tile) do
     if obj.explode then
       obj:explode()
     end
   end
   deployed[explo] = true
+  if tail then
+    return new(i+di, j+dj, di, dj, radius-1)
+  end
 end
 
 function update (dt)
