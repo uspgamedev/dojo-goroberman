@@ -20,7 +20,7 @@ function new (i, j)
     i = i,
     j = j,
     size = 0.5,
-    time = 3,
+    time = 2,
     hotspot = { sprite_cash:getWidth()/2, sprite_cash:getHeight()/2 },
     explode = explode
   }

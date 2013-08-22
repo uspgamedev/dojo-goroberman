@@ -42,7 +42,7 @@ function love.load ()
   end
   -- Cria uns MechaWils
   for i=1,5 do
-    avatars.new 'wil'
+    (avatars.new 'wil').size = 1/4
   end
 end
 

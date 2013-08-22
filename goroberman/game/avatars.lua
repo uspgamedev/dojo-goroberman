@@ -28,16 +28,16 @@ function load ()
   deployed = {}
   sprite_cash = sprite_cash or {
     goroba = love.graphics.newImage 'data/images/hero_goroba_small.png',
-    wil = love.graphics.newImage 'data/images/hero_wil_small.png'
+    wil = love.graphics.newImage 'data/images/hero_wil.png'
   }
   hotspot_cash = hotspot_cash or {
     goroba = {
       sprite_cash.goroba:getWidth()/2,
-      sprite_cash.goroba:getHeight()-TILESIZE/2
+      sprite_cash.goroba:getHeight()*3/4
     },
     wil = {
       sprite_cash.wil:getWidth()/2,
-      sprite_cash.wil:getHeight()-TILESIZE/2
+      sprite_cash.wil:getHeight()*3/4
     }
   }
 end
@@ -108,7 +108,9 @@ function update (dt)
   for avatar,_ in pairs(deployed) do
     if avatar:dying() then
       avatar.timer = avatar.timer + dt
-      if avatar.timer > 0.5 then
+      avatar.rotation = math.pi*2*5*avatar.timer
+      avatar.size = avatar.size*((10^6)^dt)
+      if avatar.timer > 1/2 then
         table.insert(dead, avatar)
       end
     end 
@@ -122,9 +124,6 @@ function show ()
   for avatar,_ in pairs(deployed) do
     love.graphics.push()
     if avatar:dying() then
-      print(avatar.ID)
-      avatar.rotation = math.pi*2*10*avatar.timer
-      avatar.size = 1+avatar.timer*2
       love.graphics.translate(
         1000*avatar.timer*math.cos(avatar.fly_dir),
         1000*avatar.timer*math.sin(avatar.fly_dir)
