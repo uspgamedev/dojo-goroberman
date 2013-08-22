@@ -8,9 +8,6 @@ require 'draw'
 --- Guarda a música de fundo do jogo
 local bgm
 
---- Tabela com funções que tratam as explosões
-explo_handlers = {}
-
 --- Código para ser executado no início do jogo.
 function love.load ()
   WIDTH = love.graphics.getWidth()
@@ -26,29 +23,6 @@ function love.load ()
   bgm:setLooping(true)
   bgm:setVolume(0.3)
   bgm:play()
-end
-
---- Trata o caso em que uma explosão atinge uma caixa.
-function explo_handlers.box (box)
-  map.put(box.i, box.j, 'box', nil)
-end
-
---- Trata o caso em que uma explosão atinge outra bomba.
-function explo_handlers.bomb (bomb)
-  bomb:explode()
-end
-
---- Trata o caso que uma explosão atinge o GoroberMan.
-function explo_handlers.goroberman (self)
-  local old_keypressed = love.keypressed
-  love.keypressed = function (button)
-    if button == ' ' then
-      love.keypressed = old_keypressed
-      map.load(16, 11)
-      goroberman.load()
-    end
-  end
-  goroberman.die()
 end
 
 --- Código executado a todo quadro do jogo.

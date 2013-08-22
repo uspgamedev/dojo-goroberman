@@ -35,9 +35,9 @@ function new (i, j)
     frame = 1,
     time = period
   }
-  for k,obj in pairs(tile) do
-    if explo_handlers[k] then
-      explo_handlers[k] (obj)
+  for _,obj in pairs(tile) do
+    if obj.explode then
+      obj:explode()
     end
   end
   deployed[explo] = true

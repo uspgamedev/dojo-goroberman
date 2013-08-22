@@ -4,6 +4,14 @@ module ('map', package.seeall)
 local draw = require 'draw'
 local tiles
 
+local function make_box (i, j)
+  return {
+    i = i,
+    j = j,
+    explode = function () map.put(i, j, 'box', nil) end
+  }
+end
+
 function load (w, h)
   width, height = w, h
   tiles = {}
@@ -13,7 +21,7 @@ function load (w, h)
       if i%2 == 0 and j%2 == 0 then
         tiles[i][j] = { wall = true }
       else
-        tiles[i][j] = { box = math.random() > 0.5 and {i=i, j=j} or nil }
+        tiles[i][j] = { box = math.random() > 0.5 and make_box(i, j) or nil }
       end
     end
   end

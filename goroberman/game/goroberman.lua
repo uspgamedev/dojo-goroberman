@@ -49,8 +49,16 @@ function move (di, dj)
   map.put(i, j, 'goroberman', goroberman)
 end
 
+--- Trata o caso que uma explosão atinge o GoroberMan.
 function explode (self)
-  
+  local old_keypressed = love.keypressed
+  love.keypressed = function (button)
+    if button == ' ' then
+      love.keypressed = old_keypressed
+      love.load()
+    end
+  end
+  die()
 end
 
 function die ()
