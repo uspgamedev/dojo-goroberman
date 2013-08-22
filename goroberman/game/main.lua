@@ -29,17 +29,17 @@ function love.load ()
 end
 
 --- Trata o caso em que uma explosão atinge uma caixa.
-function explo_handlers.box (i, j)
-  map.put(i, j, 'box', nil)
+function explo_handlers.box (box)
+  map.put(box.i, box.j, 'box', nil)
 end
 
 --- Trata o caso em que uma explosão atinge outra bomba.
-function explo_handlers.bomb (i, j, bomb)
+function explo_handlers.bomb (bomb)
   bomb:explode()
 end
 
 --- Trata o caso que uma explosão atinge o GoroberMan.
-function explo_handlers.goroberman (i, j)
+function explo_handlers.goroberman (self)
   local old_keypressed = love.keypressed
   love.keypressed = function (button)
     if button == ' ' then

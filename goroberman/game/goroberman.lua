@@ -49,6 +49,10 @@ function move (di, dj)
   map.put(i, j, 'goroberman', goroberman)
 end
 
+function explode (self)
+  
+end
+
 function die ()
   state = 'dying'
   timer = 0

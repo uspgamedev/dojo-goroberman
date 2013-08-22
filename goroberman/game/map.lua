@@ -13,7 +13,7 @@ function load (w, h)
       if i%2 == 0 and j%2 == 0 then
         tiles[i][j] = { wall = true }
       else
-        tiles[i][j] = { box = math.random() > 0.5 }
+        tiles[i][j] = { box = math.random() > 0.5 and {i=i, j=j} or nil }
       end
     end
   end

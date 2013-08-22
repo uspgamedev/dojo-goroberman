@@ -37,7 +37,7 @@ function new (i, j)
   }
   for k,obj in pairs(tile) do
     if explo_handlers[k] then
-      explo_handlers[k] (i, j, obj)
+      explo_handlers[k] (obj)
     end
   end
   deployed[explo] = true
