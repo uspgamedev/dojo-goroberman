@@ -12,7 +12,8 @@ local proto = {
   rotation = 0,
   hotspot = nil,
   i = 1, j = 1,
-  damages = true
+  damages = true,
+  delay = 0
 }
 
 local collides_with = {
@@ -100,13 +101,13 @@ end
 
 --- Trata o caso que uma explosão atinge o GoroberMan.
 function proto:explode ()
-  explos.sound:rewind()
-  explos.sound:play()
   self:die()
 end
 
 function proto:die ()
   if self:dying() then return end
+  explos.sound:rewind()
+  explos.sound:play()
   map.put(self.i, self.j, 'avatar', nil)
   self.state = 'dying'
   self.timer = 0
@@ -121,7 +122,18 @@ end
 function update (dt)
   local dead = {}
   for avatar,_ in pairs(deployed) do
-    if avatar:dying() then
+    if avatar:alive() and avatar.damages then
+      -- This is done by enemy avatars
+      avatar.delay = avatar.delay - dt
+      if avatar.delay <= 0 then
+        if math.random() >= 0.5 then
+          avatar:move(1-2*(math.random(2)-1), 0)
+        else
+          avatar:move(0, 1-2*(math.random(2)-1))
+        end
+        avatar.delay = -math.log(math.random())*0.5
+      end
+    elseif avatar:dying() then
       avatar.timer = avatar.timer + dt
       avatar.rotation = math.pi*2*5*avatar.timer
       avatar.size = avatar.size*((10^6)^dt)
