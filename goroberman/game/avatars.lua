@@ -172,6 +172,8 @@ function show ()
           10*math.cos(3*avatar.accum),
           10*math.sin(3*avatar.accum)
         )
+      else
+        avatar.rotation = math.pi/20*math.sin(10*avatar.accum)
       end
     elseif avatar:dying() then
       love.graphics.translate(
