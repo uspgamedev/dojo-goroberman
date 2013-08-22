@@ -1,7 +1,8 @@
 
 module ('avatars', package.seeall)
 
-local map = require 'map'
+local map     = require 'map'
+local explos  = require 'explos'
 
 local proto = {
   state = 'alive',
@@ -10,7 +11,8 @@ local proto = {
   size = 1,
   rotation = 0,
   hotspot = nil,
-  i = 1, j = 1
+  i = 1, j = 1,
+  damages = true
 }
 
 local collides_with = {
@@ -84,6 +86,12 @@ end
 function proto:move (di, dj)
   if not self:alive() then return end
   local new_i, new_j = map.inside(self.i+di, self.j+dj)
+  if self.damages then
+    local another = map.get(new_i, new_j, 'avatar')
+    if another and another ~= self then
+      another:explode()
+    end
+  end
   if collides(new_i, new_j) then return end
   map.put(self.i, self.j, 'avatar', nil)
   self.i, self.j = new_i, new_j
@@ -92,6 +100,8 @@ end
 
 --- Trata o caso que uma explosão atinge o GoroberMan.
 function proto:explode ()
+  explos.sound:rewind()
+  explos.sound:play()
   self:die()
 end
 

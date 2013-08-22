@@ -30,6 +30,7 @@ function love.load ()
   end
   -- Inicializa o goroberman
   goroberman = avatars.new 'goroba'
+  goroberman.damages = false
   function goroberman:explode ()
     local old_keypressed = love.keypressed
     function love.keypressed (button)
