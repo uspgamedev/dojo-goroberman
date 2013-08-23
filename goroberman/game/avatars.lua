@@ -99,6 +99,13 @@ function proto:move (di, dj)
     end
   end
   if collides(new_i, new_j) then return end
+  if not self.damages then
+    local item = map.get(new_i, new_j, 'item')
+    if item then
+      item.action(self)
+      map.put(new_i, new_j, 'item', nil)
+    end
+  end
   map.put(self.i, self.j, 'avatar', nil)
   self.i, self.j = new_i, new_j
   map.put(self.i, self.j, 'avatar', self)

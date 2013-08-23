@@ -47,10 +47,8 @@ function love.load ()
     end
     self:die()
   end
-  -- Cria uns MechaWils
-  for i=1,5 do
-    (avatars.new 'wil').size = 1/4
-  end
+  -- Cria um MechaWils
+  (avatars.new 'wil').size = 1/4
 end
 
 

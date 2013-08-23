@@ -3,16 +3,37 @@ module ('map', package.seeall)
 
 local draw = require 'draw'
 local tiles
+local bomb_sprite
+local bomb_hotspot
 
 local function make_box (i, j)
   return {
     i = i,
     j = j,
-    explode = function () map.put(i, j, 'box', nil) end
+    explode = function (self)
+      map.put(i, j, 'box', nil)
+      if math.random() > 0.7 then
+        map.put(i, j, 'item', {
+          i = i,
+          j = j,
+          action = function () bombs.increaseLimit() end,
+          sprite = bomb_sprite,
+          size = 1/16,
+          rotation = 0,
+          hotspot = bomb_hotspot,
+          explode = function (self)
+            map.put(i, j, 'item', nil)
+          end
+        })
+      end
+    end,
   }
 end
 
 function load (w, h)
+  bomb_sprite =
+    bomb_sprite or love.graphics.newImage 'data/images/bomb-item.png'
+  bomb_hotspot = {bomb_sprite:getWidth()/2, bomb_sprite:getHeight()/2}
   width, height = w, h
   tiles = {}
   for i=1,height do
@@ -54,6 +75,9 @@ function show ()
       end
       if tile.box then
         draw.box(i,j)
+      end
+      if tile.item then
+        draw.sprite(tile.item)
       end
     end
   end 

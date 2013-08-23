@@ -66,3 +66,7 @@ end
 function wall (i, j)
   cube(i, j, {150, 150, 150}, 0)
 end
+
+function item (i, j)
+  cube(i, j, {0, 255, 0}, 16)
+end

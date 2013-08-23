@@ -43,6 +43,10 @@ function update (dt)
   end 
 end
 
+function increaseLimit ()
+  limit = limit + 1
+end
+
 --- Explode a bomba passada como argumento.
 function explode (bomb, radius)
   radius = radius or 2

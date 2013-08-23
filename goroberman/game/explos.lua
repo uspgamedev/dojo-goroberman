@@ -42,10 +42,14 @@ function new (i, j, di, dj, radius)
   if radius and radius > 1 and not tile.box then
     tail = true
   end
+  local buffer = {}
   for _,obj in pairs(tile) do
     if obj.explode then
-      obj:explode()
+      table.insert(buffer, obj)
     end
+  end
+  for _,obj in ipairs(buffer) do
+    obj:explode()
   end
   deployed[explo] = true
   if tail then
