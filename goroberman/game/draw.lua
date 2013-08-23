@@ -1,6 +1,9 @@
 
 module ('draw', package.seeall)
 
+function load ()
+end
+
 function toPixel (i, j)
   return 32+(j-1)*TILESIZE, 54+32+(i-1)*TILESIZE
 end
@@ -67,6 +70,6 @@ function wall (i, j)
   cube(i, j, {150, 150, 150}, 0)
 end
 
-function item (i, j)
-  cube(i, j, {0, 255, 0}, 16)
+function item (obj)
+  sprite(obj)
 end

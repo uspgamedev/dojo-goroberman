@@ -27,6 +27,7 @@ function love.load ()
   avatars.load()
   bombs.load()
   explos.load()
+  draw.load()
   -- Inicializa música de fundo
   if not bgm then
     bgm = love.audio.newSource 'data/musics/8-Bit Bomber.ogg'

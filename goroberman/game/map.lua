@@ -77,7 +77,7 @@ function show ()
         draw.box(i,j)
       end
       if tile.item then
-        draw.sprite(tile.item)
+        draw.item(tile.item)
       end
     end
   end 
